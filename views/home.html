@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Socket.IO Test</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+
+<body>
+    <input type="text" id="username" placeholder="Enter your username"
+        style="width: 40%; height: 40px; padding: 10px; border-radius: 10px; border: 2px solid black;margin-top: 20px; font-size: 18px;">
+    <input type="text" class="message" placeholder="Type your message..."
+        style="width: 40%; height: 40px; padding: 10px; border-radius: 10px; border: 2px solid black;margin-top: 20px; font-size: 18px;">
+    <button onclick="sendMessage()"
+        style="padding: 10px 20px; height: 60px; border:none ; border-radius: 5px; background-color: #007bff; color: white; cursor: pointer; margin-top: 20px;">Send</button>
+
+    <h1></h1>
+
+    <script>
+        const socket = io("http://localhost:3000");
+
+       
+        socket.on('message', (data) => {
+            const messageElement = `<p>${data.sender}: ${data.text}</p>`;
+            document.querySelector('h1').innerHTML += messageElement;
+        });
+
+ 
+        function sendMessage() {
+            const usernameInput = document.querySelector('#username');
+            const messageInput = document.querySelector('.message');
+            const message = messageInput.value;
+            const username = usernameInput.value.trim() || 'Anonymous'; 
+
+            if (message.trim()) {
+                socket.emit('message', { text: message, sender: username });
+                document.querySelector('h1').innerHTML += `<p>You: ${message}</p>`;
+                messageInput.value = ''; 
+            }
+        }
+    </script>
+</body>
+
+</html>
